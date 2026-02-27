@@ -36,7 +36,7 @@ public class BlackJack{
     playerAceReduceCounter = 0;
     dealerAceReduceCounter = 0;
    }
-
+   //Function determines the bet for the game
    public void pickBet(){
     if(playerPot == 0){
         playerPot = 100000;
@@ -268,7 +268,7 @@ public class BlackJack{
         }
         }
    }
-
+   //Allows the game to run continously if prompted to do so
    public void playGame(){
         System.out.println("Do you want to play? (y/n)");
         if(read.next().equalsIgnoreCase("y")){
@@ -288,3 +288,4 @@ public class BlackJack{
         Game.playGame();
    }
 }
+
