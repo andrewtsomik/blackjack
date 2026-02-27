@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.ArrayList;
 
 public class BlackJack{
    private int playerPot;
@@ -12,6 +11,8 @@ public class BlackJack{
    private int dealerCardNum;
    private int playerAceCount;
    private int dealerAceCount;
+   private int playerAceReduceCounter;
+   private int dealerAceReduceCounter;
    private ArrayList<String> deck;
    private String[] cards = {"2H", "3H", "4H", "5H", "6H", "7H", "8H", "9H", "10H", "JH", "QH", "KH", "AH",
              "2D", "3D", "4D", "5D", "6D", "7D", "8D", "9D", "10D", "JD", "QD", "KD", "AD",
@@ -32,6 +33,8 @@ public class BlackJack{
     read = new Scanner(System.in);
     playerAceCount = 0;
     dealerAceCount = 0;
+    playerAceReduceCounter = 0;
+    dealerAceReduceCounter = 0;
    }
 
    public void pickBet(){
@@ -54,35 +57,36 @@ public class BlackJack{
       dealerPot -= dealerBet;
       }
     }
-
+    //Distributes first two cards for player and dealer
    public void giveCards(){
     playerAceCount = 0;
     dealerAceCount = 0;
+    playerAceReduceCounter = 0;
+    dealerAceReduceCounter = 0;
     for(int i = 0; i < 2; i++){
         int cardIndex = (int)(Math.random() * deck.size());
         String tempCardHolder = deck.remove(cardIndex);
-        System.out.println(tempCardHolder);
         if(tempCardHolder.substring(0, 1).equals("J") || tempCardHolder.substring(0, 1).equals("Q") || tempCardHolder.substring(0, 1).equals("K")){
             playerCardCount += 10;
-            System.out.println("You drawed " + tempCardHolder.substring(0, 1));
+            System.out.println("You drawed " + tempCardHolder);
         }else if(tempCardHolder.substring(0, 2).equals("10")){
             playerCardCount += 10;
-            System.out.println("You drawed " + tempCardHolder.substring(0, 2));
+            System.out.println("You drawed " + tempCardHolder);
         }
         else if(tempCardHolder.substring(0, 1).equals("A") && playerCardCount <= 10 && playerAceCount == 0){
             playerCardCount += 11;
             playerAceCount++;
-            System.out.println("You drawed " + tempCardHolder.substring(0, 1));
+            System.out.println("You drawed " + tempCardHolder);
         }else if(tempCardHolder.substring(0, 1).equals("A") && (playerAceCount > 0 || playerCardCount > 10)){
            if(playerCardCount > 10)
             playerCardCount++;
           else if (playerAceCount > 0)
             playerCardCount -=9;
             playerAceCount++;
-            System.out.println("You drawed " + tempCardHolder.substring(0, 1));
+            System.out.println("You drawed " + tempCardHolder);
         }else{
         playerCardCount += Integer.valueOf(tempCardHolder.substring(0, 1));
-        System.out.println("You drawed " + Integer.valueOf(tempCardHolder.substring(0, 1)));
+        System.out.println("You drawed " + tempCardHolder);
         }
         playerCardNum++;
     }
@@ -98,10 +102,10 @@ public class BlackJack{
                 dealerAceCount++;
             }else if(tempCardHolder.substring(0, 1).equals("A") && (dealerAceCount > 0 || dealerCardCount > 10)){
                 if(dealerCardCount > 10)
-            dealerCardCount++;
-          else if (dealerAceCount > 0)
-            dealerCardCount -= 9;
-            dealerAceCount++;
+                    dealerCardCount++;
+                else if (dealerAceCount > 0)
+                    dealerCardCount -= 9;
+                dealerAceCount++;
             }else{
                 dealerCardCount += Integer.valueOf(tempCardHolder.substring(0, 1));;
             }
@@ -110,7 +114,7 @@ public class BlackJack{
         dealerCardNum++;
     }
    }
-
+   //Function that decides whether you proceed after the initial card pulls
    public void hitOrStand(){
     if(playerCardCount == 21){
                 playerPot += playerBet * 2;
@@ -130,25 +134,35 @@ public class BlackJack{
             int cardIndex = (int)(Math.random() * deck.size());
             String tempCardHolder = deck.remove(cardIndex);
         if(tempCardHolder.substring(0, 1).equals("J") || tempCardHolder.substring(0, 1).equals("Q") || tempCardHolder.substring(0, 1).equals("K")){
+            if(playerAceCount > 0 && playerCardCount > 10 && playerAceReduceCounter == 0){
+                playerCardCount -= 10;
+                playerAceReduceCounter++;
+            }
             playerCardCount += 10;
-            System.out.println("You drawed " + tempCardHolder.substring(0, 1));
+            System.out.println("You drawed " + tempCardHolder);
         }else if(tempCardHolder.substring(0, 2).equals("10")){
+            if(playerAceCount > 0 && playerCardCount > 10 && playerAceReduceCounter == 0){
+                playerCardCount -= 10;
+                playerAceReduceCounter++;
+            }
             playerCardCount += 10;
-            System.out.println("You drawed " + Integer.valueOf(tempCardHolder.substring(0, 2)));
+            System.out.println("You drawed " + tempCardHolder);
         }else if(tempCardHolder.substring(0, 1).equals("A") && playerCardCount <= 10 && playerAceCount == 0){
             playerCardCount += 11;
             playerAceCount++;
-            System.out.println("You drawed " + tempCardHolder.substring(0, 1));
+            System.out.println("You drawed " + tempCardHolder);
         }else if(tempCardHolder.substring(0, 1).equals("A") && (playerAceCount > 0 || playerCardCount > 10)){
-          if(playerCardCount > 10){
+          if(playerCardCount > 10)
             playerCardCount++;
-          }
-          else if (playerAceCount > 0){
+          else if (playerAceCount > 0)
             playerCardCount -= 9;
-          }
             playerAceCount++;
-            System.out.println("You drawed " + tempCardHolder.substring(0, 1));
+            System.out.println("You drawed " + tempCardHolder);
         }else{
+        if(playerAceCount > 0 && playerCardCount > 10 && playerAceReduceCounter == 0){
+                playerCardCount -= 10;
+                playerAceReduceCounter++;
+            }
         playerCardCount += Integer.valueOf(tempCardHolder.substring(0, 1));
         System.out.println("You drawed " + Integer.valueOf(tempCardHolder.substring(0, 1)));
         }
@@ -178,25 +192,38 @@ public class BlackJack{
             int cardIndex = (int)(Math.random() * deck.size());
             String tempCardHolder = deck.remove(cardIndex);
             if(tempCardHolder.substring(0, 1).equals("J") || tempCardHolder.substring(0, 1).equals("Q") || tempCardHolder.substring(0, 1).equals("K")){
+                if(dealerAceCount > 0 && dealerCardCount > 10 && dealerAceReduceCounter == 0){
+                    dealerCardCount -= 10;
+                    dealerAceReduceCounter++;
+                }
                 dealerCardCount += 10;
-                System.out.println("Dealer draws: " + tempCardHolder.substring(0, 1));
+                System.out.println("Dealer draws: " + tempCardHolder);
             }else if(tempCardHolder.substring(0, 2).equals("10")){
+                if(dealerAceCount > 0 && dealerCardCount > 10 && dealerAceReduceCounter == 0){
+                    dealerCardCount -= 10;
+                    dealerAceReduceCounter++;
+                }
                 dealerCardCount += 10;
-                System.out.println("Dealer draws: " + tempCardHolder.substring(0, 2));
+                System.out.println("Dealer draws: " + tempCardHolder);
             }else if(tempCardHolder.substring(0, 1).equals("A") && dealerCardCount <= 10 && dealerAceCount == 0){
                 dealerCardCount += 11;
                 dealerAceCount++;
-                System.out.println("Dealer draws: " + tempCardHolder.substring(0, 1));
+                System.out.println("Dealer draws: " + tempCardHolder);
             }else if(tempCardHolder.substring(0, 1).equals("A") && (dealerAceCount > 0 || dealerCardCount > 10)){
                 if(dealerCardCount > 10)
-            dealerCardCount++;
-          else if (dealerAceCount > 0)
-            dealerCardCount -= 9;
-            dealerAceCount++;
-                System.out.println("Dealer draws: " + tempCardHolder.substring(0, 1));
+                    dealerCardCount++;
+                else if (dealerAceCount > 0){
+                    dealerCardCount -= 9;
+                    dealerAceCount++;
+                }
+                System.out.println("Dealer draws: " + tempCardHolder);
             }else{
+                if(dealerAceCount > 0 && dealerCardCount > 10 && dealerAceReduceCounter == 0){
+                    dealerCardCount -= 10;
+                    dealerAceReduceCounter++;
+                }
                 dealerCardCount += Integer.valueOf(tempCardHolder.substring(0, 1));
-                System.out.println("Dealer draws: " + Integer.valueOf(tempCardHolder.substring(0, 1)));
+                System.out.println("Dealer draws: " + tempCardHolder);
             }
            }
            System.out.println("Dealer's cards:" + dealerCardCount);
