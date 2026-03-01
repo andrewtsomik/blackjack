@@ -166,7 +166,7 @@ public class BlackJack{
                 playerCardCount -= 10;
                 playerAceReduceCounter++;
             }
-        System.out.println("You drawed " + Integer.valueOf(tempCardHolder.substring(0, 1)));
+        System.out.println("You drawed " + tempCardHolder);
         }
         System.out.println("Your cards:" + playerCardCount);
         if(playerCardNum == 5){
